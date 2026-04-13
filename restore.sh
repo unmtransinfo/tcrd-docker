@@ -5,24 +5,15 @@ DB_NAME="${MYSQL_DATABASE}"
 DUMP_URL="${DUMP_URL}"
 
 TARBALL=/tmp/tcrd.sql.gz
-DUMP_DIR=/tmp/tcrd-dump
 
 echo "Downloading MySQL dump from '$DUMP_URL'..."
 curl -fsSL -o "$TARBALL" "$DUMP_URL"
 
-echo "Extracting dump archive..."
-tar -xzf "$TARBALL" -C /tmp
-
-# TODO: need to revise this part
-echo "Loading dump into '$DB_NAME' using mysqlsh..."
-mysqlsh root@localhost \
-  --password="${MYSQL_ROOT_PASSWORD}" \
-  -- util load-dump "$DUMP_DIR" \
-  --threads=8 \
-  --skipBinlog=true
+echo "Loading dump into '$DB_NAME'..."
+gunzip -c "$TARBALL" | mysql -u root -p"${MYSQL_ROOT_PASSWORD}" "$DB_NAME"
 
 # Clean up temporary files to reclaim disk space
-rm -rf "$TARBALL" "$DUMP_DIR"
+rm -f "$TARBALL"
 
 echo "Restore complete."
 
