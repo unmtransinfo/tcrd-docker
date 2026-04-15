@@ -47,7 +47,7 @@ Note that the code within this repository relies on an existing dump of the TCRD
    docker compose logs -f
    ```
 
-   The DB will take some time to restore, it takes about 2 hours using `CPUS=8` and `MEMORY=128G`.
+   The DB will take some time to restore, it takes about 10 hours using `CPUS=8` and `MEMORY=128G` (vanilla mysql restore is very slow).
 
    The container will be ready to use once you see a message like the following:
 
