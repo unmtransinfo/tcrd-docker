@@ -12,7 +12,7 @@ Note that the code within this repository relies on an existing dump of the TCRD
 ## Prerequisites
 
 - [Docker](https://docs.docker.com/engine/install/)
-- At least 90GB of free storage space # TODO: revise this
+- At least 140GB of free storage space
 - (Recommended) at least 32GB of RAM
 
 ## Usage
