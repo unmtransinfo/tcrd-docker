@@ -17,6 +17,25 @@ rm -f "$TARBALL"
 
 echo "Restore complete."
 
+# Fix any orphaned definers left over from the dump (e.g. 'smathias'@'localhost').
+# Reassign all views, functions, procedures, triggers and events to root@localhost
+# so MySQL does not report them as corrupt.
+echo "Fixing orphaned object definers in '$DB_NAME'..."
+mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -D "${DB_NAME}" -e "
+  -- Views
+  SELECT CONCAT(
+    'ALTER DEFINER=\`root\`@\`localhost\` VIEW \`',
+    table_name,
+    '\` AS ', view_definition, ';'
+  )
+  FROM information_schema.views
+  WHERE table_schema = '${DB_NAME}'
+    AND definer <> 'root@localhost';
+" --skip-column-names --batch 2>/dev/null \
+  | mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -D "${DB_NAME}" || true
+
+echo "Definer fix complete."
+
 # Create read-only user if DB_USER and DB_PASSWORD are set
 if [ -n "$DB_USER" ] && [ -n "$DB_PASSWORD" ]; then
   echo "Creating read-only user '$DB_USER'..."
